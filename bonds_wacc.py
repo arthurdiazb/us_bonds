@@ -1,8 +1,8 @@
-from bs4 import BeautifulSoup
-from io import BytesIO
 import streamlit as st
 import pandas as pd
 import requests
+import bs4
+import io
 
 def get_bonds(ano):
     # URL do site
@@ -45,7 +45,7 @@ if gerar_tabela:
         st.dataframe(df_merge)
 
         # exportar para Excel
-        output = BytesIO()
+        output = io.BytesIO()
         with pd.ExcelWriter(output, engine="openpyxl") as writer:
             df_merge.to_excel(writer, index=True, sheet_name="YieldCurve")
 
