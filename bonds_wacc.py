@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 import requests
-import bs4
+import beautifulsoup4
 import io
 
 def get_bonds(ano):
