@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import openpyxl
 import requests
 from bs4 import BeautifulSoup
 from io import BytesIO
@@ -22,6 +23,7 @@ def get_bonds(ano):
     return df
 
 titulo = st.title("US Bonds")
+subtitulo = st.subheader('Fonte: U.S. Government Bonds')
 anos = st.multiselect("Selecione os anos para a gerar a tabela",range(2020,2026))
 gerar_tabela = st.button("Gerar tabela")
 
@@ -52,9 +54,22 @@ if gerar_tabela:
             # aplicar formato de data dd/mm/yyyy
             workbook  = writer.book
             worksheet = writer.sheets["YieldCurve"]
-            for cell in worksheet["A"][1:]:  # coluna A = Date
+            for cell in worksheet["A"][1:]:
                 cell.number_format = "DD/MM/YYYY"
-            worksheet.column_dimensions["A"].width = 11
+            for row in worksheet.iter_rows(min_row=2, max_row=worksheet.max_row, min_col=2, max_col=14):
+                for cell in row:
+                    cell.number_format = '#,##0.00'
+            for row in worksheet.iter_rows(min_row=2):
+                for cell in row:
+                    cell.font = openpyxl.styles.Font(bold=False)
+                    cell.border = openpyxl.styles.Border()
+            worksheet.sheet_view.showGridLines = False
+            worksheet.insert_cols(1)
+            worksheet.insert_rows(1)
+            worksheet.column_dimensions["A"].width = 4
+            worksheet.column_dimensions["B"].width = 12
+
+
         data_xlsx = output.getvalue()
 
         dowload = st.download_button(
